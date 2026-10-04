@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Sign in | Casual{% endblock %}
+{% block content %}
+  <section class="auth auth-page" aria-labelledby="signin-title">
+    <a class="back-link" href="{% url 'home' %}"><span aria-hidden="true">←</span> Back to shopping</a>
+    <div class="auth-intro">
+      <p class="eyebrow">WELCOME BACK</p>
+      <h1 id="signin-title">Good to see you.</h1>
+      <p class="muted">Sign in to view your account and orders.</p>
+    </div>
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      <label for="username">Username</label>
+      <input id="username" name="username" autocomplete="username" required>
+      <label for="password">Password</label>
+      <input id="password" type="password" name="password" autocomplete="current-password" required>
+      <button class="btn dark wide" type="submit">Sign in <span aria-hidden="true">→</span></button>
+    </form>
+    <p class="auth-switch">New to Casual? <a href="{% url 'register' %}">Create an account</a></p>
+  </section>
+{% endblock %}

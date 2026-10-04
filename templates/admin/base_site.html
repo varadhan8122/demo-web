@@ -1,0 +1,27 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | Casual Store Admin{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+{% endblock %}
+
+{% block branding %}
+  <div id="site-name">
+    <a href="{% url 'admin:index' %}" class="admin-brand">
+      <span class="admin-brand-mark" aria-hidden="true">C</span>
+      <span class="admin-brand-name">
+        <strong>CASUAL</strong>
+        <small>STORE ADMIN</small>
+      </span>
+    </a>
+  </div>
+{% endblock %}
+
+{% block nav-global %}
+  <a class="admin-store-link" href="{% url 'home' %}">
+    View storefront <span aria-hidden="true">↗</span>
+  </a>
+{% endblock %}

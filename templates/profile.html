@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}My account | Casual{% endblock %}
+{% block content %}
+<div class="profile-page">
+  <header class="profile-heading">
+    <div>
+      <p class="eyebrow">YOUR ACCOUNT</p>
+      <h1>My profile</h1>
+      <p class="muted">Manage your account and keep track of your orders.</p>
+    </div>
+    <a class="btn profile-shop-link" href="{% url 'home' %}">Continue shopping</a>
+  </header>
+
+  <div class="profile-layout">
+    <aside class="profile-card">
+      <div class="profile-identity">
+        <span class="profile-avatar" aria-hidden="true">{{ user.username|first|upper }}</span>
+        <div>
+          <h2>{{ user.get_full_name|default:user.username }}</h2>
+          <p class="muted">@{{ user.username }}</p>
+        </div>
+      </div>
+      <dl class="profile-details">
+        <div><dt>Email</dt><dd>{{ user.email|default:"Not added" }}</dd></div>
+        <div><dt>Member since</dt><dd>{{ user.date_joined|date:"F Y" }}</dd></div>
+      </dl>
+      <a class="profile-logout" href="{% url 'logout' %}">Sign out <span aria-hidden="true">→</span></a>
+    </aside>
+
+    <section class="profile-orders" aria-labelledby="orders-title">
+      <div class="profile-orders-heading">
+        <div>
+          <p class="eyebrow">YOUR PURCHASES</p>
+          <h2 id="orders-title">Order history</h2>
+        </div>
+        <span class="order-count">{{ orders|length }} order{{ orders|length|pluralize }}</span>
+      </div>
+
+      {% for o in orders %}
+        <article class="profile-order">
+          <div class="profile-order-main">
+            <div>
+              <span class="order-label">ORDER</span>
+              <a class="profile-order-id" href="{% url 'order_detail' o.order_id %}">{{ o.order_id }}</a>
+              <p class="muted">{{ o.created_at|date:"F j, Y" }}</p>
+            </div>
+            <span class="order-status order-status-{{ o.status|lower }}">{{ o.get_status_display }}</span>
+          </div>
+          <div class="profile-order-footer">
+            <span>Total paid <strong>₹{{ o.total_amount }}</strong></span>
+            <a class="profile-order-link" href="{% url 'order_detail' o.order_id %}">View order <span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+      {% empty %}
+        <div class="profile-empty">
+          <span class="profile-empty-icon" aria-hidden="true">🛍</span>
+          <h3>Your order history is waiting</h3>
+          <p class="muted">When you place an order, you’ll find its details and status here.</p>
+          <a class="btn dark" href="{% url 'home' %}">Explore the collection</a>
+        </div>
+      {% endfor %}
+    </section>
+  </div>
+</div>
+{% endblock %}

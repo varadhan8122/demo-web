@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Casual | Everyday style, made simple{% endblock %}
+{% block content %}
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-copy">
+      <p class="eyebrow">A FRESH TAKE ON EVERYDAY</p>
+      <h1 id="hero-title">Good style.<br>Easy days.</h1>
+      <p>Well-chosen essentials for men and kids, made for wherever the day takes you.</p>
+      <a class="btn dark hero-cta" href="#collections">Explore the collection <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="hero-note" aria-hidden="true"><span>Wear it your way</span><b>01 / 02</b></div>
+  </section>
+
+  <section class="collection-showcase" aria-labelledby="collection-title">
+    <div class="collection-heading">
+      <div><p class="eyebrow">FIND YOUR FIT</p><h2 id="collection-title">Shop by collection</h2></div>
+      <p>Easy-to-wear picks for every day, for the whole family.</p>
+    </div>
+    <div class="collection-grid">
+      <article class="collection-card collection-card-men">
+        <button class="collection-art" type="button" aria-label="Rotate men's collection image 360 degrees"><span>THE EVERYDAY EDIT</span></button>
+        <div class="collection-copy">
+          <p class="eyebrow">MEN'S COLLECTION</p>
+          <h3>Made for your everyday</h3>
+          <p>Oxford shirts, relaxed tees and versatile chinos to make getting dressed easy.</p>
+          <a class="collection-link" href="{% url 'home' %}?category=Men#collections">Explore men's styles <span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+      <article class="collection-card collection-card-kids">
+        <button class="collection-art" type="button" aria-label="Rotate kids' collection image 360 degrees"><span>PLAY ALL DAY</span></button>
+        <div class="collection-copy">
+          <p class="eyebrow">KIDS' COLLECTION</p>
+          <h3>Ready for little adventures</h3>
+          <p>Soft everyday tees, comfy joggers and easy layers for all-day play.</p>
+          <a class="collection-link" href="{% url 'home' %}?category=Kids#collections">Explore kids' styles <span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <div class="shop-layout">
+    <aside class="filters" aria-labelledby="filter-title">
+      <div class="filter-heading"><h2 id="filter-title">Find your style</h2><span aria-hidden="true">＋</span></div>
+      <form method="get" action="{% url 'home' %}">
+        <label class="search-label" for="product-search">Search</label>
+        <input id="product-search" name="q" type="search" placeholder="Search products..." value="{{ selected.q }}">
+
+        <fieldset class="filter-group">
+          <legend>Category</legend>
+          {% for c in categories %}
+            <label class="filter-option"><input type="radio" name="category" value="{{ c.name }}" {% if selected.category == c.name %}checked{% endif %}><span>{{ c.name }}</span></label>
+          {% endfor %}
+        </fieldset>
+        <fieldset class="filter-group">
+          <legend>Brands</legend>
+          {% for b in brands %}
+            <label class="filter-option"><input type="radio" name="brand" value="{{ b.name }}" {% if selected.brand == b.name %}checked{% endif %}><span>{{ b.name }}</span></label>
+          {% endfor %}
+        </fieldset>
+        <fieldset class="filter-group">
+          <legend>Colours</legend>
+          {% for c in colours %}
+            <label class="filter-option"><input type="radio" name="colour" value="{{ c.name }}" {% if selected.colour == c.name %}checked{% endif %}><span class="dot" style="--swatch: {{ c.hex_code }}" aria-hidden="true"></span><span>{{ c.name }}</span></label>
+          {% endfor %}
+        </fieldset>
+        <fieldset class="filter-group">
+          <legend>Discount</legend>
+          <label class="filter-option"><input type="radio" name="discount" value="12" {% if selected.discount == "12" %}checked{% endif %}><span>Up to 12%</span></label>
+          <label class="filter-option"><input type="radio" name="discount" value="40" {% if selected.discount == "40" %}checked{% endif %}><span>Up to 40%</span></label>
+          <label class="filter-option"><input type="radio" name="discount" value="80" {% if selected.discount == "80" %}checked{% endif %}><span>Up to 80%</span></label>
+        </fieldset>
+        <button class="btn dark wide" type="submit">Apply filters</button>
+        <a class="clear" href="{% url 'home' %}">Clear all filters</a>
+      </form>
+    </aside>
+
+    <section class="products" aria-labelledby="collections">
+      <div class="section-head" id="collections">
+        <div><p class="eyebrow">MADE FOR REAL LIFE</p><h2>Shop all styles</h2></div>
+        <span class="product-count">{{ products|length }} product{{ products|length|pluralize }}</span>
+      </div>
+      <div class="grid">
+        {% for p in products %}
+          <article class="card">
+            <a class="product-image-link" href="{% url 'product_detail' p.pk %}" aria-label="View {{ p.name }}">
+              {% if p.image %}
+                <img src="{{ p.image.url }}" alt="{{ p.name }}" loading="lazy" decoding="async">
+              {% else %}
+                <div class="placeholder product-placeholder product-placeholder-{{ p.category.name|lower }}"><span>{{ p.category.name }} collection</span><strong>{{ p.name }}</strong></div>
+              {% endif %}
+              {% if p.discount_percent %}<span class="product-badge">{{ p.discount_percent }}% off</span>{% endif %}
+            </a>
+            <div class="card-body">
+              <small>{{ p.brand.name }} <span aria-hidden="true">·</span> {{ p.category.name }}</small>
+              <h3><a href="{% url 'product_detail' p.pk %}">{{ p.name }}</a></h3>
+              <p class="product-prices"><strong>₹{{ p.selling_price }}</strong>{% if p.discount_percent %}<del>₹{{ p.original_price }}</del>{% endif %}</p>
+              <a class="card-action" href="{% url 'product_detail' p.pk %}">View details <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+        {% empty %}
+          <div class="empty">
+            <h3>No styles found</h3>
+            <p>Try adjusting your filters, or clear them to see the full collection.</p>
+            <a class="btn dark" href="{% url 'home' %}">Clear filters</a>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+{% endblock %}
+{% block scripts %}
+  <script>
+    document.querySelectorAll(".collection-art").forEach((image) => {
+      image.addEventListener("click", () => {
+        image.classList.remove("is-rotating");
+        void image.offsetWidth;
+        image.classList.add("is-rotating");
+      });
+      image.addEventListener("animationend", () => {
+        image.classList.remove("is-rotating");
+      });
+    });
+  </script>
+{% endblock %}

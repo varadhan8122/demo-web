@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} | Casual{% endblock %}
+{% block content %}
+  <div class="product-page">
+    <section class="gallery" aria-label="Product images">
+      {% if product.image %}
+        <img id="mainImage" class="main-img" src="{{ product.image.url }}" alt="{{ product.name }}">
+      {% else %}
+        <div id="mainImage" class="placeholder large product-placeholder product-placeholder-{{ product.category.name|lower }}"><span>{{ product.category.name }} collection</span><strong>{{ product.name }}</strong></div>
+      {% endif %}
+      {% if product.image or product.colour_images.all %}
+        <div class="thumbs" aria-label="Other product colours">
+          {% for ci in product.colour_images.all %}
+            <button class="thumb-button" type="button" data-image="{{ ci.image.url }}" aria-label="View {{ ci.colour.name }} colour" aria-pressed="false">{{ ci.colour.name }}</button>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </section>
+
+    <section class="details" aria-labelledby="product-title">
+      <a class="back-link" href="{% url 'home' %}"><span aria-hidden="true">←</span> Back to collection</a>
+      <p class="eyebrow product-brand">{{ product.brand.name }} <span aria-hidden="true">·</span> {{ product.category.name }}</p>
+      <h1 id="product-title">{{ product.name }}</h1>
+      <p class="price"><strong>₹{{ product.selling_price }}</strong>{% if product.discount_percent %}<del>₹{{ product.original_price }}</del><span>{{ product.discount_percent }}% off</span>{% endif %}</p>
+      {% if product.description %}<p class="product-description">{{ product.description }}</p>{% endif %}
+      <dl class="product-specs">
+        {% if product.material %}<div><dt>Material</dt><dd>{{ product.material }}</dd></div>{% endif %}
+        {% if product.fit %}<div><dt>Fit</dt><dd>{{ product.fit }}</dd></div>{% endif %}
+        <div><dt>Availability</dt><dd>{% if product.stock %}In stock{% else %}Currently unavailable{% endif %}</dd></div>
+      </dl>
+
+      <form class="add-to-bag-form" method="post" action="{% url 'add_to_cart' product.pk %}">
+        {% csrf_token %}
+        <label for="product-colour">Colour</label>
+        <select id="product-colour" name="colour">
+          {% for c in product.colours.all %}<option value="{{ c.name }}">{{ c.name }}</option>{% empty %}<option value="">Standard</option>{% endfor %}
+        </select>
+        <fieldset class="size-fieldset">
+          <legend>Choose a size</legend>
+          <div class="sizes">
+            {% for s in product.sizes.all %}
+              <label><input required type="radio" name="size" value="{{ s.name }}"><span>{{ s.name }}</span></label>
+            {% empty %}
+              <p class="muted">No sizes listed. Please contact us for availability.</p>
+            {% endfor %}
+          </div>
+        </fieldset>
+        <label for="product-quantity">Quantity</label>
+        <input id="product-quantity" class="qty" type="number" name="quantity" min="1" max="{{ product.stock }}" value="1">
+        <button class="btn dark wide" type="submit" {% if not product.stock %}disabled{% endif %}>Add to bag <span aria-hidden="true">→</span></button>
+      </form>
+
+      <section class="reviews" aria-labelledby="reviews-title">
+        <div class="review-heading"><h2 id="reviews-title">Customer reviews</h2><span>{{ reviews|length }} review{{ reviews|length|pluralize }}</span></div>
+        {% for r in reviews %}
+          <article class="review">
+            <b><span aria-label="{{ r.rating }} out of 5 stars">{{ r.rating }}/5</span> <span aria-hidden="true">·</span> {{ r.user.username }}</b>
+            <p>{{ r.comment }}</p>
+          </article>
+        {% empty %}
+          <p class="muted">No reviews yet. Be the first to share your experience after receiving this item.</p>
+        {% endfor %}
+        {% if can_review %}
+          <form class="review-form" method="post">
+            {% csrf_token %}
+            <h3>Share your review</h3>
+            {{ form.as_p }}
+            <button class="btn" type="submit">Submit review</button>
+          </form>
+        {% elif user.is_authenticated %}
+          <p class="muted review-hint">You can leave a review after this product has been delivered.</p>
+        {% endif %}
+      </section>
+    </section>
+  </div>
+{% endblock %}
+{% block scripts %}
+  <script>
+    document.querySelectorAll(".thumb-button").forEach((button) => {
+      button.addEventListener("click", () => {
+        const image = document.getElementById("mainImage");
+        if (image && image.tagName === "IMG") {
+          image.src = button.dataset.image;
+        }
+        document.querySelectorAll(".thumb-button").forEach((thumb) => {
+          thumb.setAttribute("aria-pressed", String(thumb === button));
+        });
+      });
+    });
+  </script>
+{% endblock %}

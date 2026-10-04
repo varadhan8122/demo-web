@@ -1,0 +1,20 @@
+{% extends "admin/index.html" %}
+
+{% block content %}
+  <section class="admin-welcome" aria-labelledby="admin-welcome-title">
+    <div class="admin-welcome-copy">
+      <p class="admin-kicker">STORE CONTROL CENTER</p>
+      <h1 id="admin-welcome-title">Welcome to Casual.</h1>
+      <p>Manage your collections, products, customers and orders from one place.</p>
+    </div>
+    <nav class="admin-quick-links" aria-label="Store shortcuts">
+      <a href="{% url 'admin:store_product_changelist' %}">
+        Manage products <span aria-hidden="true">→</span>
+      </a>
+      <a href="{% url 'admin:store_order_changelist' %}">
+        View orders <span aria-hidden="true">→</span>
+      </a>
+    </nav>
+  </section>
+  {{ block.super }}
+{% endblock %}

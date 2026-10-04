@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Create account | Casual{% endblock %}
+{% block content %}
+  <section class="auth auth-page" aria-labelledby="register-title">
+    <a class="back-link" href="{% url 'home' %}"><span aria-hidden="true">←</span> Back to shopping</a>
+    <div class="auth-intro">
+      <p class="eyebrow">JOIN THE EVERYDAY</p>
+      <h1 id="register-title">Create your account.</h1>
+      <p class="muted">A simpler way to keep up with your orders.</p>
+    </div>
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn dark wide" type="submit">Create account <span aria-hidden="true">→</span></button>
+    </form>
+    <p class="auth-switch">Already have an account? <a href="{% url 'login' %}">Sign in</a></p>
+  </section>
+{% endblock %}

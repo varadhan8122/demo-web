@@ -1,0 +1,49 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f4f1">
+  <title>{% block title %}Casual | Everyday fashion{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="header">
+    <a class="logo" href="{% url 'home' %}" aria-label="Casual home">Harishith<span>.</span></a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="{% url 'home' %}">Home</a>
+      <a href="{% url 'home' %}?category=Men">Men</a>
+      <a href="{% url 'home' %}?category=Kids">Kids</a>
+      <a href="{% url 'home' %}#collections">Shop</a>
+    </nav>
+    <nav class="header-actions" aria-label="Account and bag">
+      {% if user.is_authenticated %}
+        <a class="account-link" href="{% url 'profile' %}"><span class="nav-icon" aria-hidden="true">◎</span><span>My account</span></a>
+      {% else %}
+        <a class="account-link" href="{% url 'login' %}"><span class="nav-icon" aria-hidden="true">◎</span><span>Sign in</span></a>
+      {% endif %}
+      <a class="bag-link" href="{% url 'cart' %}"><span class="nav-icon" aria-hidden="true">▢</span><span>Bag</span><span class="bag-count">{{ cart_count|default:0 }}</span></a>
+    </nav>
+  </header>
+
+  {% if messages %}
+    <div class="messages" aria-live="polite" aria-atomic="true">
+      {% for message in messages %}
+        <div class="message{% if message.tags %} message-{{ message.tags }}{% endif %}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <main id="main-content">{% block content %}{% endblock %}</main>
+
+  <footer class="site-footer">
+    <a class="logo footer-logo" href="{% url 'home' %}">Harishith<span>.</span></a>
+    <p>Thoughtful everyday style for men and kids.</p>
+    <small>© {% now "Y" %} Casual. All rights reserved.</small>
+  </footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

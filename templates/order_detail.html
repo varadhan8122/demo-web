@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Order {{ order.order_id }} | Casual{% endblock %}
+{% block content %}
+  <div class="container order-detail-page">
+    <a class="back-link" href="{% url 'profile' %}"><span aria-hidden="true">←</span> Back to your account</a>
+    <header class="order-detail-heading">
+      <div><p class="eyebrow">THANK YOU FOR YOUR ORDER</p><h1>Order details</h1><p class="muted">Order <strong>{{ order.order_id }}</strong> <span aria-hidden="true">·</span> {{ order.created_at|date:"F j, Y" }}</p></div>
+      <span class="order-status order-status-{{ order.status|lower }}">{{ order.get_status_display }}</span>
+    </header>
+    <div class="order-detail-layout">
+      <section class="order-detail-items">
+        <h2>Items in your order</h2>
+        {% for i in order.items.all %}
+          <article class="order-card">
+            {% if i.product.image %}<img src="{{ i.product.image.url }}" alt="{{ i.product.name }}" loading="lazy">{% else %}<div class="placeholder order-placeholder">{{ i.product.category.name }}</div>{% endif %}
+            <div class="order-item-info"><h3>{{ i.product.name }}</h3><p class="muted">{{ i.colour }} <span aria-hidden="true">·</span> Size {{ i.size }} <span aria-hidden="true">·</span> Qty {{ i.quantity }}</p></div>
+            <strong>₹{{ i.price }}</strong>
+          </article>
+        {% endfor %}
+        <div class="summary order-total"><span>Order total</span><strong>₹{{ order.total_amount }}</strong></div>
+      </section>
+      <aside class="order-information">
+        <section class="order-info-card">
+          <h2>Delivery address</h2>
+          <address>{{ order.full_name }}<br>{{ order.address }}<br>{{ order.city }}, {{ order.state }} {{ order.pincode }}</address>
+        </section>
+        <section class="order-info-card">
+          <h2>Payment</h2>
+          <p>{{ order.get_payment_method_display }}</p>
+          <p class="muted">Status: {{ order.payment_status|title }}</p>
+        </section>
+      </aside>
+    </div>
+  </div>
+{% endblock %}
